@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
    <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Menu King Seafood</title>
    <style>
        * {
@@ -10,29 +10,24 @@
            padding: 0;
            box-sizing: border-box;
        }
-
        body {
            background: black;
            height: 100vh;
            overflow: hidden;
        }
-
        .menu-container {
            height: 100%;
            overflow-y: auto;
            scrollbar-width: none;
            -webkit-overflow-scrolling: touch;
        }
-
        .menu-container::-webkit-scrollbar {
            display: none;
        }
-
        .menu-image {
            width: 100%;
            display: block;
        }
-
        .loading {
            position: fixed;
            top: 50%;
@@ -44,7 +39,6 @@
            border-radius: 10px;
            z-index: 1000;
        }
-
        @media (orientation: landscape) {
            .menu-image {
                height: 100vh;
@@ -58,7 +52,6 @@
 <body>
    <div id="loading" class="loading">Loading Menu...</div>
    <div class="menu-container" id="menuContainer"></div>
-
    <script>
        const container = document.getElementById('menuContainer');
        const loading = document.getElementById('loading');
@@ -79,10 +72,6 @@
            img.className = 'menu-image';
            container.appendChild(img);
        }
-
-       document.addEventListener('click', () => {
-           document.documentElement.requestFullscreen?.();
-       }, {once: true});
    </script>
 </body>
 </html>
