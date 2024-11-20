@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Menu King Seafood</title>
     <style>
         * {
@@ -11,26 +11,41 @@
             box-sizing: border-box;
         }
 
-        body {
-            background-color: #f0f0f0;
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-color: black;
+            position: fixed;
         }
 
         .menu-container {
-            max-width: 100%;
-            margin: 0 auto;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .menu-item {
+            width: 100vw;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
 
         .menu-image {
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: contain;
             display: block;
-            margin: 0;
-        }
-
-        .menu-item {
-            position: relative;
         }
 
         .page-number {
@@ -42,18 +57,18 @@
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 14px;
+            z-index: 100;
         }
 
-        @media screen and (min-width: 768px) {
-            .menu-container {
-                max-width: 90%;
-            }
+        /* Sembunyikan scrollbar untuk Chrome, Safari dan Opera */
+        .menu-container::-webkit-scrollbar {
+            display: none;
         }
 
-        @media screen and (min-width: 1200px) {
-            .menu-container {
-                max-width: 80%;
-            }
+        /* Sembunyikan scrollbar untuk IE, Edge dan Firefox */
+        .menu-container {
+            -ms-overflow-style: none;  /* IE dan Edge */
+            scrollbar-width: none;  /* Firefox */
         }
     </style>
 </head>
@@ -66,6 +81,17 @@
             const baseUrl = 'https://raw.githubusercontent.com/RehanDias/king-seafood/refs/heads/main/Menu%20King%20Seafood%20Update_Page_';
             const totalPages = 9;
             const pages = Array.from({length: totalPages}, (_, i) => i + 1);
+
+            // Request Fullscreen pada iOS/Android saat user interaksi pertama
+            document.body.addEventListener('click', function() {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+            }, { once: true });
 
             pages.forEach(pageNum => {
                 const menuItem = document.createElement('div');
@@ -91,6 +117,11 @@
                 container.appendChild(menuItem);
             });
         });
+
+        // Mencegah bounce effect pada iOS
+        document.ontouchmove = function(event) {
+            event.preventDefault();
+        }
     </script>
 </body>
 </html>
