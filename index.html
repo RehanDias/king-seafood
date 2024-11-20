@@ -9,41 +9,28 @@
            margin: 0;
            padding: 0;
            box-sizing: border-box;
-           -webkit-tap-highlight-color: transparent;
        }
 
-       html, body {
-           width: 100%;
-           height: 100%;
-           margin: 0;
-           padding: 0;
+       body {
+           background: black;
+           height: 100vh;
            overflow: hidden;
-           background-color: black;
-           position: fixed;
        }
 
        .menu-container {
-           width: 100%;
            height: 100%;
-           overflow-y: scroll;
-           scroll-behavior: smooth;
+           overflow-y: auto;
+           scrollbar-width: none;
            -webkit-overflow-scrolling: touch;
        }
 
-       .menu-item {
-           width: 100%;
-           display: flex;
-           justify-content: center;
-           align-items: center;
-           position: relative;
+       .menu-container::-webkit-scrollbar {
+           display: none;
        }
 
        .menu-image {
            width: 100%;
-           object-fit: contain;
            display: block;
-           user-select: none;
-           -webkit-user-select: none;
        }
 
        .loading {
@@ -56,38 +43,14 @@
            padding: 20px;
            border-radius: 10px;
            z-index: 1000;
-           text-align: center;
-       }
-
-       .menu-container::-webkit-scrollbar {
-           display: none;
-       }
-       
-       .menu-container {
-           -ms-overflow-style: none;
-           scrollbar-width: none;
-       }
-
-       .menu-item {
-           opacity: 0;
-           transition: opacity 0.3s ease;
-       }
-
-       .menu-item.loaded {
-           opacity: 1;
        }
 
        @media (orientation: landscape) {
            .menu-image {
-               max-height: 100vh;
+               height: 100vh;
                width: auto;
                margin: 0 auto;
-           }
-       }
-
-       @supports (-webkit-touch-callout: none) {
-           .menu-container {
-               height: -webkit-fill-available;
+               object-fit: contain;
            }
        }
    </style>
@@ -97,89 +60,29 @@
    <div class="menu-container" id="menuContainer"></div>
 
    <script>
-       document.addEventListener('DOMContentLoaded', function() {
-           const container = document.getElementById('menuContainer');
-           const loading = document.getElementById('loading');
-           const baseUrl = 'https://raw.githubusercontent.com/RehanDias/king-seafood/refs/heads/main/Menu%20King%20Seafood%20Update_Page_';
-           const totalPages = 9;
-           let loadedImages = 0;
+       const container = document.getElementById('menuContainer');
+       const loading = document.getElementById('loading');
+       const baseUrl = 'https://raw.githubusercontent.com/RehanDias/king-seafood/refs/heads/main/Menu%20King%20Seafood%20Update_Page_';
+       const totalPages = 9;
+       let loadedImages = 0;
 
-           document.addEventListener('touchmove', function(e) {
-               e.preventDefault();
-           }, { passive: false });
+       function updateLoading() {
+           loadedImages++;
+           loading.textContent = `Loading Menu... ${Math.round((loadedImages/totalPages) * 100)}%`;
+           if(loadedImages === totalPages) loading.style.display = 'none';
+       }
 
-           container.addEventListener('touchmove', function(e) {
-               e.stopPropagation();
-           }, { passive: true });
+       for(let i = 1; i <= totalPages; i++) {
+           const img = new Image();
+           img.onload = updateLoading;
+           img.src = `${baseUrl}${i}.webp`;
+           img.className = 'menu-image';
+           container.appendChild(img);
+       }
 
-           function updateLoadingStatus() {
-               loadedImages++;
-               loading.textContent = `Loading Menu... ${Math.round((loadedImages/totalPages) * 100)}%`;
-               if(loadedImages === totalPages) {
-                   setTimeout(() => {
-                       loading.style.display = 'none';
-                   }, 500);
-               }
-           }
-
-           function createMenuItem(pageNum) {
-               return new Promise((resolve, reject) => {
-                   const menuItem = document.createElement('div');
-                   menuItem.className = 'menu-item';
-
-                   const img = new Image();
-                   img.onload = () => {
-                       menuItem.classList.add('loaded');
-                       updateLoadingStatus();
-                       resolve(menuItem);
-                   };
-
-                   img.onerror = () => {
-                       console.error(`Failed to load image ${pageNum}`);
-                       updateLoadingStatus();
-                       reject(new Error(`Failed to load image ${pageNum}`));
-                   };
-
-                   img.src = `${baseUrl}${pageNum}.jpg`;
-                   img.alt = `Menu Page ${pageNum}`;
-                   img.className = 'menu-image';
-                   
-                   if(pageNum > 1) {
-                       img.loading = 'lazy';
-                   }
-
-                   menuItem.appendChild(img);
-               });
-           }
-
-           async function loadImages() {
-               try {
-                   for(let i = 1; i <= totalPages; i++) {
-                       const menuItem = await createMenuItem(i);
-                       container.appendChild(menuItem);
-                   }
-
-                   const requestFullscreen = () => {
-                       if (document.documentElement.requestFullscreen) {
-                           document.documentElement.requestFullscreen();
-                       } else if (document.documentElement.webkitRequestFullscreen) {
-                           document.documentElement.webkitRequestFullscreen();
-                       } else if (document.documentElement.msRequestFullscreen) {
-                           document.documentElement.msRequestFullscreen();
-                       }
-                       document.removeEventListener('click', requestFullscreen);
-                   };
-
-                   document.addEventListener('click', requestFullscreen);
-
-               } catch(error) {
-                   console.error('Error loading images:', error);
-                   loading.textContent = 'Error loading images. Please refresh.';
-               }
-           }
-
-           loadImages();
-       });
+       document.addEventListener('click', () => {
+           document.documentElement.requestFullscreen?.();
+       }, {once: true});
    </script>
 </body>
 </html>
