@@ -18,6 +18,8 @@
         .menu-container {
             max-width: 100%;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .menu-image {
@@ -25,6 +27,21 @@
             height: auto;
             display: block;
             margin: 0;
+        }
+
+        .menu-item {
+            position: relative;
+        }
+
+        .page-number {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
         }
 
         @media screen and (min-width: 768px) {
@@ -46,23 +63,33 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.getElementById('menuContainer');
+            const baseUrl = 'https://raw.githubusercontent.com/RehanDias/king-seafood/refs/heads/main/Menu%20King%20Seafood%20Update_Page_';
             const totalPages = 9;
-            
-            for(let i = 1; i <= totalPages; i++) {
+            const pages = Array.from({length: totalPages}, (_, i) => i + 1);
+
+            pages.forEach(pageNum => {
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+
                 const img = document.createElement('img');
-                img.src = `Menu King Seafood Update_Page_${i}.jpg`;
-                img.alt = `Menu Page ${i}`;
+                img.src = `${baseUrl}${pageNum}.jpg`;
+                img.alt = `Menu Page ${pageNum}`;
                 img.className = 'menu-image';
                 img.loading = 'lazy';
-                
-           
+
+                const pageNumber = document.createElement('div');
+                pageNumber.className = 'page-number';
+                pageNumber.textContent = `Halaman ${pageNum}`;
+
                 img.onerror = function() {
-                    console.log(`Gambar halaman ${i} tidak dapat dimuat`);
-                    this.style.display = 'none';
+                    console.log(`Gambar halaman ${pageNum} tidak dapat dimuat`);
+                    menuItem.style.display = 'none';
                 };
-                
-                container.appendChild(img);
-            }
+
+                menuItem.appendChild(img);
+                menuItem.appendChild(pageNumber);
+                container.appendChild(menuItem);
+            });
         });
     </script>
 </body>
